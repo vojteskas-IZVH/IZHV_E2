@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Velocity multiplier applied when jumping.
     /// </summary>
-    public float jumpVelocity = 100.0f;
+    public float jumpVelocity = 150.0f;
 
     /// <summary>
     /// Distance to which ground should be detected.

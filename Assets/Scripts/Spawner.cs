@@ -34,6 +34,11 @@ public class Spawner : MonoBehaviour
     /// Size of the spawned obstacles.
     /// </summary>
     public float spawnSize = 1.0f;
+
+    /// <summary>
+    /// x-axis speed of the spawned obstacles
+    /// </summary>
+    public float spawnXSpeed = 3.0f;
     
     /// <summary>
     /// Layer used for the spawned obstacles.
@@ -67,15 +72,18 @@ public class Spawner : MonoBehaviour
     void Update()
     {
         if (spawnObstacles)
-        { // Check if we should spawn.
+        {
+            // Check if we should spawn.
             spawnAccumulator += Time.deltaTime;
             if (spawnAccumulator >= nextSpawnIn)
-            { // Spawn at most one obstacle per frame.
+            {
+                // Spawn at most one obstacle per frame.
                 spawnAccumulator -= nextSpawnIn;
                 nextSpawnIn = RandomNormal(spawnFrequencyMean, spawnFrequencyStd);
-                
+
                 SpawnObstacle();
             }
+            SetObstacleXSpeed(spawnXSpeed);
         }
     }
 
@@ -96,7 +104,7 @@ public class Spawner : MonoBehaviour
         
         // Scale it.
         obstacle.transform.localScale = new Vector3(spawnSize, spawnSize, spawnSize);
-        
+
         // Move the obstacle into the correct layer.
         obstacle.layer = LayerMask.NameToLayer(spawnLayer);
     }
@@ -137,6 +145,19 @@ public class Spawner : MonoBehaviour
         { // Iterate through all children, modifying current speed of obstacles.
             if (child.gameObject.layer == obstacleLayer) 
             { child.GetComponent<Rigidbody2D>().velocity *= xMultiplier; }
+        }
+    }
+
+    public void SetObstacleXSpeed(float xspeed)
+    {
+        // Get obstacle layer to filter with.
+        var obstacleLayer = LayerMask.NameToLayer(spawnLayer);
+        // Modify only the x-axis movement.
+        var speed = new Vector2(-xspeed, 0.0f); // negative xspeed to move from right to left
+        foreach (Transform child in transform)
+        { // Iterate through all children, modifying current speed of obstacles.
+            if (child.gameObject.layer == obstacleLayer) 
+            { child.GetComponent<Rigidbody2D>().velocity = speed; }
         }
     }
 
